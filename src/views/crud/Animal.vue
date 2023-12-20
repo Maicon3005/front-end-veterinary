@@ -16,13 +16,10 @@
                             <td>{{ row.item.age }}</td>
                             <td>{{ row.item.size }}</td>
                             <td>
-                                <v-btn class="mx-1" color="orange">
+                                <v-btn class="mx-1" color="orange" :to="{ path: `/animal/edit/${row.item.id}` }">
                                     EDITAR
                                 </v-btn>
-                                <v-btn class="mx-1">
-                                    DETALHES
-                                </v-btn>
-                                <v-btn class="mx-1" color="red">
+                                <v-btn class="mx-1" color="red" @Click="onDelete(row.item.id)">
                                     EXCLUIR
                                 </v-btn>
                             </td>
@@ -36,7 +33,7 @@
 
 <script setup lang="ts">
 import { api } from '@/services/axios';
-import { AnimalSchemaType, headers } from '@/stores/animal';
+import { AnimalSchemaType, headers } from '@/stores/animal'
 import { ref } from 'vue';
 
 const animalList = ref<AnimalSchemaType[]>();
@@ -45,5 +42,11 @@ const animalList = ref<AnimalSchemaType[]>();
     const res = await api.get('animal');
     animalList.value = res.data;
 })()
+
+//TODO: Ao deletar um item a tabela de items não esta sendo atualizada
+const onDelete = async (id?: string) => {
+    console.log(id);
+    await api.delete(`animal/${id}`);
+}
 
 </script>

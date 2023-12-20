@@ -14,6 +14,7 @@
 <script setup lang="ts">
 
 import { useForm } from 'vee-validate';
+import { ref, watch } from 'vue'
 import { AnimalSchemaType, animalSchema, possibleAnimalSizes } from '@/stores/animal';
 
 const props = defineProps<{
@@ -28,7 +29,11 @@ const { defineField, handleSubmit, resetForm, setValues } = useForm<AnimalSchema
     validationSchema: animalSchema,
 });
 
-if (props.defaultAnimal) setValues(props.defaultAnimal);
+watch(props, (newProps) => {
+    if (newProps.defaultAnimal) {
+        setValues(newProps.defaultAnimal);
+    }
+})
 
 const vuetifyConfig = (state: any) => ({
     props: {
