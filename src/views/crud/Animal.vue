@@ -16,7 +16,7 @@
                             <td>{{ row.item.age }}</td>
                             <td>{{ row.item.size }}</td>
                             <td>
-                                <v-btn class="mx-1" color="orange" :to="{ path: `/animal/edit/${row.item.id}}`}">
+                                <v-btn class="mx-1" color="orange" :to="{ path: `/animal/edit/${row.item.id}` }">
                                     EDITAR
                                 </v-btn>
                                 <v-btn class="mx-1" color="red" @Click="onDelete(row.item.id)">

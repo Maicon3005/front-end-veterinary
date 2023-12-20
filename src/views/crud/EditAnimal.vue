@@ -29,9 +29,8 @@ const animalId = route.params.idAnimal;
 const animalEdit = ref<AnimalSchemaType>();
 
 (async () => {
-    const res = await api.get<AnimalSchemaType>(`/animal/351C67EA-9D27-4299-9A01-8178C1D816D9`);
+    const res = await api.get<AnimalSchemaType>(`/animal/${animalId}`);
     animalEdit.value = res.data;
-    console.log(animalEdit.value);
 })()
 
 const onSubmit = async (values: AnimalSchemaType) => {
