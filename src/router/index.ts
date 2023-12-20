@@ -25,8 +25,13 @@ const routes = [
   },
   {
     path: "/animal/create",
-    name: "createAnimals",
+    name: "createAnimal",
     component: () => import("@/views/crud/CreateAnimal.vue"),
+  },
+  {
+    path: "/animal/edit/:idAnimal",
+    name: "editAnimal",
+    component: () => import("@/views/crud/EditAnimal.vue"),
   },
   { path: '/:pathMatch(.*)*', redirect: '/account/login' }
 ]
