@@ -43,6 +43,11 @@ const routes = [
     name: "editVeterinarian",
     component: () => import("@/views/crud/EditVeterinarian.vue"),
   },
+  {
+    path: "/treatment/create",
+    name: "createTreatment",
+    component: () => import("@/views/crud/CreateTreatment.vue"),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/account/login' }
 ]
 
