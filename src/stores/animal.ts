@@ -65,10 +65,6 @@ const useAnimalStore = defineStore('animal', {
     getters: {},
 
     actions: {
-        async list() {
-            const { data } = await api.get<AnimalSchemaType[]>('animal');
-            this.animals = data;
-        },
         async create(values: AnimalSchemaType) {
             await api.post('animal', values);
         },

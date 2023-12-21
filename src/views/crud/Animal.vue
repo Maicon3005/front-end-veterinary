@@ -19,7 +19,7 @@
                                 <v-btn class="mx-1" color="orange" :to="{ path: `/animal/edit/${row.item.id}` }">
                                     EDITAR
                                 </v-btn>
-                                <v-btn class="mx-1" color="red" @Click="onDelete(row.item.id)">
+                                <v-btn class="mx-1" color="red" @Click="onDelete(row.item.id, row.item.name)">
                                     EXCLUIR
                                 </v-btn>
                             </td>
@@ -35,18 +35,24 @@
 import { api } from '@/services/axios';
 import { AnimalSchemaType, headers } from '@/stores/animal'
 import { ref } from 'vue';
+import { useQuery, useQueryClient } from "vue-query";
 
 const animalList = ref<AnimalSchemaType[]>();
 
-(async () => {
-    const res = await api.get('animal');
-    animalList.value = res.data;
-})()
+const queryClient = useQueryClient();
 
-//TODO: Ao deletar um item a tabela de items não esta sendo atualizada
-const onDelete = async (id?: string) => {
-    console.log(id);
-    await api.delete(`animal/${id}`);
+useQuery({
+    queryKey: ['todos'], queryFn: async () => {
+        const res = await api.get('animal');
+        animalList.value = res.data;
+    }
+})
+
+const onDelete = async (id?: string, name?: string) => {
+    const isConfirmed = confirm(`Tem certeza que deseja excluir o ${name}`);
+    if (isConfirmed) {
+        await api.delete(`animal/${id}`);
+        queryClient.invalidateQueries({ queryKey: ['todos'] });
+    }
 }
-
 </script>
