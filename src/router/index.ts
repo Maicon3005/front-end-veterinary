@@ -28,6 +28,21 @@ const routes = [
     name: "editAnimal",
     component: () => import("@/views/crud/EditAnimal.vue"),
   },
+  {
+    path: "/veterinarian",
+    name: "veterinarian",
+    component: () => import("@/views/crud/Veterinarian.vue"),
+  },
+  {
+    path: "/veterinarian/create",
+    name: "createVeterinarian",
+    component: () => import("@/views/crud/CreateVeterinarian.vue"),
+  },
+  {
+    path: "/veterinarian/edit/:idVeterinarian",
+    name: "editVeterinarian",
+    component: () => import("@/views/crud/EditVeterinarian.vue"),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/account/login' }
 ]
 

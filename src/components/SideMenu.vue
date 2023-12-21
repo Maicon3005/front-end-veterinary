@@ -5,6 +5,8 @@
             </v-list-item>
             <v-list-item prepend-icon="mdi-paw" title="Animais" to="/animals">
             </v-list-item>
+            <v-list-item prepend-icon="mdi-doctor" title="Veterinários" to="/veterinarian">
+            </v-list-item>
             <v-list-item prepend-icon="mdi-logout" title="Sair" @click="onLogout">
             </v-list-item>
         </v-list>
