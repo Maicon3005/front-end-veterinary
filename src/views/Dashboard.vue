@@ -1,29 +1,14 @@
 <template>
     <v-card>
         <v-layout>
-            <v-app-bar color="primary" prominent>
-                <v-app-bar-nav-icon variant="text" @click="dropDownMenu"></v-app-bar-nav-icon>
-
-                <v-toolbar-title>Dashboard</v-toolbar-title>
-            </v-app-bar>
-
-            <v-navigation-drawer v-model="drawer" location="bottom" temporary>
-                <v-list>
-                    <v-list-item>
-                        <v-btn to="/animals">
-                            CRUD
-                        </v-btn>
-                    </v-list-item>
-                    <v-list-item>
-                        <v-btn @click="logout">LOGOUT</v-btn>
-                    </v-list-item>
-                </v-list>
-            </v-navigation-drawer>
-
-            <v-main style="height: 600px;">
-                <v-card-text>
-                    Teste Veterinary API
-                </v-card-text>
+            <side-menu></side-menu>
+            <v-main style="height: 650px; padding: 20px 80px;"><v-row>
+                    <h2>Dashboard</h2>
+                    <v-divider></v-divider>
+                    <v-banner-text>
+                        Teste de consumo de API com <b>Vuetify</b>
+                    </v-banner-text>
+                </v-row>
             </v-main>
         </v-layout>
     </v-card>
@@ -31,16 +16,6 @@
 
 <script setup lang="ts">
 
-import { useAuthStore } from "@/stores/auth";
-import { ref } from 'vue'
+import SideMenu from '@/components/SideMenu.vue';
 
-let drawer = ref(false);
-
-function dropDownMenu() {
-    drawer.value = !drawer.value;
-}
-
-function logout() {
-    useAuthStore().logout();
-}
 </script>

@@ -9,11 +9,6 @@ const routes = [
     component: () => import("@/views/Login.vue"),
   },
   {
-    path: "/account/register",
-    name: "register",
-    component: () => import("@/views/Register.vue"),
-  },
-  {
     path: "/dashboard",
     name: "dashboard",
     component: () => import("@/views/Dashboard.vue"),
@@ -33,6 +28,21 @@ const routes = [
     name: "editAnimal",
     component: () => import("@/views/crud/EditAnimal.vue"),
   },
+  {
+    path: "/veterinarian",
+    name: "veterinarian",
+    component: () => import("@/views/crud/Veterinarian.vue"),
+  },
+  {
+    path: "/veterinarian/create",
+    name: "createVeterinarian",
+    component: () => import("@/views/crud/CreateVeterinarian.vue"),
+  },
+  {
+    path: "/veterinarian/edit/:idVeterinarian",
+    name: "editVeterinarian",
+    component: () => import("@/views/crud/EditVeterinarian.vue"),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/account/login' }
 ]
 
@@ -41,17 +51,24 @@ const router = createRouter({
   routes,
 })
 
+const pathsPublicPages = ['login'];
+
 router.beforeEach(async (to) => {
   const alertStore = useAlertStore();
   alertStore.clear();
 
-  const publicPages = ['/account/login', '/account/register'];
-  const authRequired = !publicPages.includes(to.path);
+  const authRequired = !pathsPublicPages.includes(to.path);
   const authStore = useAuthStore();
+  const userIsLogged = authRequired && authStore.token != null;
+  const toIsLoginPage = to.name === 'login';
 
-  if (authRequired && !authStore.token) {
+  if (!toIsLoginPage && !userIsLogged) {
     authStore.returnUrl = to.fullPath;
     return '/account/login';
+  }
+
+  if (toIsLoginPage && userIsLogged) {
+    return '/dashboard';
   }
 });
 

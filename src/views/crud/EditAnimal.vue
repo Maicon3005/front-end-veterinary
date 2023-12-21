@@ -1,11 +1,10 @@
 <template>
     <v-card>
         <v-layout>
-            <v-app-bar color="primary" prominent>
-                <v-toolbar-title>Editar Animal</v-toolbar-title>
-            </v-app-bar>
-
-            <v-main style="height: 600px;">
+            <side-menu></side-menu>
+            <v-main style="height: 650px; padding: 20px 100px;">
+                <h2>Editar Animal</h2>
+                <v-divider></v-divider>
                 <v-card-text>
                     <animal-form :default-animal="animalEdit" @submit="onSubmit"></animal-form>
                 </v-card-text>
@@ -18,6 +17,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import { AnimalSchemaType, useAnimalStore } from '@/stores/animal';
 import AnimalForm from '@/components/AnimalForm.vue';
+import SideMenu from '@/components/SideMenu.vue';
 import { ref } from 'vue';
 import { api } from '@/services/axios';
 
