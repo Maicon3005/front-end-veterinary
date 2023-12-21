@@ -36,19 +36,18 @@
 
 <script setup lang="ts">
 import { api } from '@/services/axios';
-import { VeterinarianSchemaType, headers } from '@/stores/veterinarian';
+import { useVeterinarianStore, VeterinarianSchemaType, headers } from '@/stores/veterinarian';
 import { ref } from 'vue';
 import { useQuery, useQueryClient } from "vue-query";
 import SideMenu from '@/components/SideMenu.vue';
 
 const veterinarianList = ref<VeterinarianSchemaType[]>();
-
 const queryClient = useQueryClient();
+const veterinarianStore = useVeterinarianStore();
 
 useQuery({
     queryKey: ['veterinarians'], queryFn: async () => {
-        const res = await api.get('veterinarian');
-        veterinarianList.value = res.data;
+        veterinarianList.value = await veterinarianStore.getAllVeterinarians();
     }
 })
 
