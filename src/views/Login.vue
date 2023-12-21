@@ -1,11 +1,11 @@
 <template>
-  <v-form @submit="onSubmit" class="px-4">
+  <v-form @submit.prevent="onSubmit" class="px-4">
     <v-text-field v-model="email" v-bind="emailProps" label="Digite seu e-mail" type="email" />
     <v-text-field v-model="password" v-bind="passwordProps" label="Digite sua senha" type="password" />
-    <v-btn color="gray" type="submit" to="/account/register"> REGISTRAR </v-btn>
-    <v-btn color="primary" type="submit"> ENTRAR </v-btn>
-    <v-alert v-show="alertMessage.hasMessage" v-bind:title="alertMessage.alert.title" v-bind:type="alertMessage.alert.type"
-      v-text="alertMessage.alert.message">
+    <v-btn color="gray" to="/account/register">REGISTRAR</v-btn>
+    <v-btn color="primary" type="submit">ENTRAR</v-btn>
+    <v-alert v-show="alertMessage.hasMessage" v-bind:title="alertMessage.alert.title"
+      v-bind:type="alertMessage.alert.type" v-text="alertMessage.alert.message">
     </v-alert>
   </v-form>
 </template>

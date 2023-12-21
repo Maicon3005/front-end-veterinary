@@ -41,17 +41,25 @@ const router = createRouter({
   routes,
 })
 
+const pathsPublicPages = ['login', 'register'];
+
 router.beforeEach(async (to) => {
   const alertStore = useAlertStore();
   alertStore.clear();
 
-  const publicPages = ['/account/login', '/account/register'];
-  const authRequired = !publicPages.includes(to.path);
+  const authRequired = !pathsPublicPages.includes(to.path);
   const authStore = useAuthStore();
+  const userIsLogged = authRequired && authStore.token != null;
+  const toIsLoginPage = to.name === 'login';
+  const toIsRegisterPage = to.name === 'register';
 
-  if (authRequired && !authStore.token) {
+  if (!toIsLoginPage && !toIsRegisterPage && !userIsLogged) {
     authStore.returnUrl = to.fullPath;
     return '/account/login';
+  }
+
+  if (toIsLoginPage && userIsLogged) {
+    return '/dashboard';
   }
 });
 

@@ -15,6 +15,7 @@ export const useAuthStore = defineStore("auth", {
         const response = await api.post("/auth/login", { email, password });
         const token = response.data;
         localStorage.setItem("token", token);
+        this.token = token;
         router.push('/dashboard');
       } catch (error: unknown) {
         useAlertStore().error('Ocorreu um erro inesperado');
