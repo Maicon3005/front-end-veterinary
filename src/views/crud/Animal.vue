@@ -1,41 +1,45 @@
 <template>
-    <v-card>
-        <v-layout>
-            <v-app-bar color="primary" prominent class="pb-0">
-                <v-btn to="/animal/create">Criar</v-btn>
-                <v-toolbar-title>Animais</v-toolbar-title>
-            </v-app-bar>
-            <v-main class="pa-16">
-                <v-data-table :headers="headers" :items="animalList" :items-per-page="5" class="elevation-1"
-                    :loading="!animalList?.length">
-                    <template v-slot:item="row">
-                        <tr>
-                            <td>{{ row.item.id }}</td>
-                            <td>{{ row.item.name }}</td>
-                            <td>{{ row.item.race }}</td>
-                            <td>{{ row.item.age }}</td>
-                            <td>{{ row.item.size }}</td>
-                            <td>
-                                <v-btn class="mx-1" color="orange" :to="{ path: `/animal/edit/${row.item.id}` }">
-                                    EDITAR
-                                </v-btn>
-                                <v-btn class="mx-1" color="red" @Click="onDelete(row.item.id, row.item.name)">
-                                    EXCLUIR
-                                </v-btn>
-                            </td>
-                        </tr>
-                    </template>
-                </v-data-table>
-            </v-main>
-        </v-layout>
-    </v-card>
+    <v-container>
+        <v-row>
+            <h2>Animais</h2>
+            <v-divider></v-divider>
+        </v-row>
+        <v-row class="pa-6">
+            <v-btn to="/animal/create" color="primary">Criar</v-btn>
+        </v-row>
+        <v-row>
+            <v-data-table :headers="headers" :items="animalList" :items-per-page="5" class="elevation-1"
+                :loading="!animalList?.length">
+                <template v-slot:item="row">
+                    <tr>
+                        <td>{{ row.item.name }}</td>
+                        <td>{{ row.item.race }}</td>
+                        <td>{{ row.item.age }}</td>
+                        <td>{{ possibleAnimalSizes.find(size => size.value === row.item.size)?.label }}</td>
+                        <td>
+                            <v-btn class="mx-1" color="orange" :to="{ path: `/animal/edit/${row.item.id}` }">
+                                <v-icon class="mr-1" icon="mdi-pencil"></v-icon>
+                            </v-btn>
+                            <v-btn class="mx-1" color="red" @Click="onDelete(row.item.id, row.item.name)">
+                                <v-icon class="mr-1" icon="mdi-delete"></v-icon>
+                            </v-btn>
+                        </td>
+                    </tr>
+                </template>
+            </v-data-table>
+        </v-row>
+    </v-container>
 </template>
 
 <script setup lang="ts">
 import { api } from '@/services/axios';
-import { AnimalSchemaType, headers } from '@/stores/animal'
+import { AnimalSchemaType, headers, possibleAnimalSizes } from '@/stores/animal'
 import { ref } from 'vue';
 import { useQuery, useQueryClient } from "vue-query";
+import {
+    mdiPencil,
+    mdiDelete,
+} from '@mdi/js';
 
 const animalList = ref<AnimalSchemaType[]>();
 
@@ -54,5 +58,9 @@ const onDelete = async (id?: string, name?: string) => {
         await api.delete(`animal/${id}`);
         queryClient.invalidateQueries({ queryKey: ['todos'] });
     }
+}
+
+const sizeSetText = (sizeValue: number) => {
+
 }
 </script>

@@ -9,11 +9,6 @@ const routes = [
     component: () => import("@/views/Login.vue"),
   },
   {
-    path: "/account/register",
-    name: "register",
-    component: () => import("@/views/Register.vue"),
-  },
-  {
     path: "/dashboard",
     name: "dashboard",
     component: () => import("@/views/Dashboard.vue"),
@@ -41,7 +36,7 @@ const router = createRouter({
   routes,
 })
 
-const pathsPublicPages = ['login', 'register'];
+const pathsPublicPages = ['login'];
 
 router.beforeEach(async (to) => {
   const alertStore = useAlertStore();
@@ -51,9 +46,8 @@ router.beforeEach(async (to) => {
   const authStore = useAuthStore();
   const userIsLogged = authRequired && authStore.token != null;
   const toIsLoginPage = to.name === 'login';
-  const toIsRegisterPage = to.name === 'register';
 
-  if (!toIsLoginPage && !toIsRegisterPage && !userIsLogged) {
+  if (!toIsLoginPage && !userIsLogged) {
     authStore.returnUrl = to.fullPath;
     return '/account/login';
   }

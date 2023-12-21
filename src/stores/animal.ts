@@ -5,17 +5,39 @@ import * as yup from 'yup';
 const possibleAnimalSizes = [
     {
         value: 0,
-        label: 'Small',
+        label: 'Pequeno',
     },
     {
         value: 1,
-        label: 'Medium',
+        label: 'Médio',
     },
     {
         value: 2,
-        label: 'Big',
+        label: 'Grande',
     },
 ];
+
+const headers = [
+    {
+        title: 'Nome',
+        key: 'name',
+    },
+    {
+        title: 'Raça',
+        key: 'race',
+    },
+    {
+        title: 'Idade',
+        key: 'age',
+    },
+    {
+        title: 'Tamanho',
+        key: 'size',
+    },
+    {
+        title: '-',
+        key: 'buttons'
+    }]
 
 const animalSchema = yup.object({
     id: yup.string().uuid(),
@@ -31,31 +53,6 @@ type AnimalSchemaType = yup.InferType<typeof animalSchema>;
 interface State {
     animals: AnimalSchemaType[];
 }
-
-const headers = [{
-    title: 'ID',
-    key: 'id',
-},
-{
-    title: 'Nome',
-    key: 'name',
-},
-{
-    title: 'Raça',
-    key: 'race',
-},
-{
-    title: 'Idade',
-    key: 'age',
-},
-{
-    title: 'Tamanho',
-    key: 'size',
-},
-{
-    title: '-',
-    key: 'buttons'
-}]
 
 const useAnimalStore = defineStore('animal', {
     state: (): State => ({

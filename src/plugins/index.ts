@@ -9,6 +9,7 @@ import vuetify from './vuetify'
 import pinia from '../stores'
 import router from '../router'
 import { VueQueryPlugin } from "vue-query";
+import '@mdi/font/css/materialdesignicons.css'
 
 // Types
 import type { App } from 'vue'

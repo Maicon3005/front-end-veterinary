@@ -11,7 +11,7 @@
                 <v-list>
                     <v-list-item>
                         <v-btn to="/animals">
-                            CRUD
+                            ANIMAL
                         </v-btn>
                     </v-list-item>
                     <v-list-item>
@@ -19,12 +19,6 @@
                     </v-list-item>
                 </v-list>
             </v-navigation-drawer>
-
-            <v-main style="height: 600px;">
-                <v-card-text>
-                    Teste Veterinary API
-                </v-card-text>
-            </v-main>
         </v-layout>
     </v-card>
 </template>
