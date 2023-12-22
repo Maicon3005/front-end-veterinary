@@ -39,7 +39,7 @@ const emit = defineEmits<{
     submit: [AnimalSchemaType];
 }>();
 
-const { defineField, handleSubmit, resetForm, setValues } = useForm<AnimalSchemaType>({
+const { defineField, handleSubmit, setValues } = useForm<AnimalSchemaType>({
     validationSchema: animalSchema,
 });
 

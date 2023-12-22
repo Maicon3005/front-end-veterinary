@@ -11,8 +11,8 @@
                     <v-btn to="/veterinarian/create" color="primary">Criar</v-btn>
                 </v-row>
                 <v-row>
-                    <v-data-table :headers="headers" :items="veterinarianList" :items-per-page="5" class="elevation-1"
-                        :loading="!veterinarianList?.length">
+                    <v-data-table :headers="headers" :items="veterinaryQuery.data.value" :items-per-page="5"
+                        class="elevation-1">
                         <template v-slot:item="row">
                             <tr>
                                 <td>{{ row.item.name }}</td>
@@ -36,26 +36,21 @@
 
 <script setup lang="ts">
 import { api } from '@/services/axios';
-import { useVeterinarianStore, VeterinarianSchemaType, headers } from '@/stores/veterinarian';
-import { ref } from 'vue';
+import { useVeterinarianStore, headers, VeterinarianSchemaType } from '@/stores/veterinarian';
 import { useQuery, useQueryClient } from "vue-query";
 import SideMenu from '@/components/SideMenu.vue';
 
-const veterinarianList = ref<VeterinarianSchemaType[]>();
-const queryClient = useQueryClient();
 const veterinarianStore = useVeterinarianStore();
-
-useQuery({
-    queryKey: ['veterinarians'], queryFn: async () => {
-        veterinarianList.value = await veterinarianStore.getAllVeterinarians();
-    }
+const clientQuery = useQueryClient();
+const veterinaryQuery = useQuery({
+    queryKey: ['veterinarians'], queryFn: async () => await veterinarianStore.getAll()
 })
 
 const onDelete = async (id?: string, name?: string) => {
     const isConfirmed = confirm(`Tem certeza que deseja excluir o ${name}`);
     if (isConfirmed) {
         await api.delete(`veterinarian/${id}`);
-        queryClient.invalidateQueries({ queryKey: ['veterinarians'] });
+        clientQuery.invalidateQueries({ queryKey: ['veterinarians'] });
     }
 }
 </script>
