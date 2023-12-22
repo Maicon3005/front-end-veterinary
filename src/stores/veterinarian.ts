@@ -44,7 +44,7 @@ const useVeterinarianStore = defineStore('veterinarian', {
             await api.put(`veterinarian/${values.id}`, values);
         },
         async getAll() {
-            return (await api.get('veterinarian/')).data;
+            return (await api.get<VeterinarianSchemaType[]>('veterinarian/')).data;
         }
     },
 });

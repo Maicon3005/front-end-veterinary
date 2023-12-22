@@ -7,8 +7,9 @@
             </v-list-item>
             <v-list-item prepend-icon="mdi-doctor" title="Veterinários" to="/veterinarian">
             </v-list-item>
-            <v-list-item prepend-icon="mdi-note-outline" title="Receitas" to="/">
+            <v-list-item prepend-icon="mdi-note-outline" title="Receitas" to="/treatment">
             </v-list-item>
+
             <v-list-item prepend-icon="mdi-logout" title="Sair" @click="onLogout">
             </v-list-item>
         </v-list>

@@ -4,13 +4,13 @@
             <v-col cols="12" sm="10">
                 <v-row>
                     <v-col cols="12" md="6">
-                        <v-select :items="defaultVeterinarians" v-bind="veterinarianIdProps" :item-text="'name'"
+                        <v-select :items="toValue(defaultVeterinarians)" v-bind="veterinarianIdProps" :item-text="'name'"
                             :item-value="'id'" :item-title="'name'" v-model="veterinarianId" name="selectedVeterinary"
                             label="Veterinários" outlined dense color="blue">
                         </v-select>
-                        <v-select :items="defaultAnimals" v-bind="animaldProps" :item-text="'name'" :item-value="'id'"
-                            :item-title="'name'" v-model="animalId" name="selectedAnimal" label="Animais" outlined dense
-                            color="blue">
+                        <v-select :items="toValue(defaultAnimals)" v-bind="animaldProps" :item-text="'name'"
+                            :item-value="'id'" :item-title="'name'" v-model="animalId" name="selectedAnimal" label="Animais"
+                            outlined dense color="blue">
                         </v-select>
                         <v-textarea v-model="recipe" v-bind="recipeProps" label="Digite o tratamento" type="text" outlined
                             dense color="blue" autocomplete="false" class="mt-8" required>
@@ -32,10 +32,12 @@ import { useForm } from 'vee-validate';
 import { TreatmentSchemaSchemaType, treatmentSchema } from '@/stores/treatment';
 import { VeterinarianSchemaType } from '@/stores/veterinarian';
 import { AnimalSchemaType } from '@/stores/animal';
+import { MaybeRef, toValue, watch } from 'vue';
 
 const props = defineProps<{
-    defaultVeterinarians?: VeterinarianSchemaType[];
-    defaultAnimals?: AnimalSchemaType[];
+    defaultVeterinarians?: MaybeRef<VeterinarianSchemaType[] | undefined>;
+    defaultAnimals?: MaybeRef<AnimalSchemaType[] | undefined>;
+    defaultTreatment?: TreatmentSchemaSchemaType;
 }>();
 
 const emit = defineEmits<{
@@ -45,6 +47,14 @@ const emit = defineEmits<{
 const { defineField, handleSubmit } = useForm<TreatmentSchemaSchemaType>({
     validationSchema: treatmentSchema,
 });
+
+watch(props, (newProps) => {
+    if (newProps.defaultTreatment) {
+        animalId.value = newProps.defaultTreatment.animalId;
+        veterinarianId.value = newProps.defaultTreatment.veterinarianId;
+        recipe.value = newProps.defaultTreatment.recipe;
+    }
+})
 
 const onSubmit = handleSubmit((values) => {
     emit('submit', values);
@@ -56,7 +66,7 @@ const vuetifyConfig = (state: any) => ({
     },
 });
 
-const [veterinarianId, veterinarianIdProps] = defineField<'veterinarianId'>('veterinarianId', vuetifyConfig);
-const [animalId, animaldProps] = defineField<'animalId'>('animalId', vuetifyConfig);
-const [recipe, recipeProps] = defineField<'recipe'>('recipe', vuetifyConfig);
+let [veterinarianId, veterinarianIdProps] = defineField<'veterinarianId'>('veterinarianId', vuetifyConfig);
+let [animalId, animaldProps] = defineField<'animalId'>('animalId', vuetifyConfig);
+let [recipe, recipeProps] = defineField<'recipe'>('recipe', vuetifyConfig);
 </script>

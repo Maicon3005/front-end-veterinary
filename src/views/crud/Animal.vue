@@ -11,8 +11,8 @@
                     <v-btn to="/animal/create" color="primary">Criar</v-btn>
                 </v-row>
                 <v-row>
-                    <v-data-table :headers="headers" :items="animalList" :items-per-page="5" class="elevation-1"
-                        :loading="!animalList?.length">
+                    <v-data-table :headers="headers" :items="animalQuery.data.value?.data" :items-per-page="5"
+                        class="elevation-1">
                         <template v-slot:item="row">
                             <tr>
                                 <td>{{ row.item.name }}</td>
@@ -39,26 +39,19 @@
 <script setup lang="ts">
 import { api } from '@/services/axios';
 import { AnimalSchemaType, headers, possibleAnimalSizes } from '@/stores/animal';
-import { ref } from 'vue';
 import { useQuery, useQueryClient } from "vue-query";
 import SideMenu from '@/components/SideMenu.vue';
 
-const animalList = ref<AnimalSchemaType[]>();
-
-const queryClient = useQueryClient();
-
-useQuery({
-    queryKey: ['animals'], queryFn: async () => {
-        const res = await api.get('animal');
-        animalList.value = res.data;
-    }
+const clientQuery = useQueryClient();
+const animalQuery = useQuery({
+    queryKey: ['animals'], queryFn: async () => await api.get<AnimalSchemaType[]>('animal')
 })
 
 const onDelete = async (id?: string, name?: string) => {
     const isConfirmed = confirm(`Tem certeza que deseja excluir o ${name}`);
     if (isConfirmed) {
         await api.delete(`animal/${id}`);
-        queryClient.invalidateQueries({ queryKey: ['animals'] });
+        clientQuery.invalidateQueries({ queryKey: ['animals'] });
     }
 }
 </script>
