@@ -47,7 +47,7 @@ const veterinarianStore = useVeterinarianStore();
 
 useQuery({
     queryKey: ['veterinarians'], queryFn: async () => {
-        veterinarianList.value = await veterinarianStore.getAllVeterinarians();
+        veterinarianList.value = await veterinarianStore.getAll();
     }
 })
 

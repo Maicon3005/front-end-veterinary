@@ -68,6 +68,9 @@ const useAnimalStore = defineStore('animal', {
         async edit(values: AnimalSchemaType) {
             await api.put(`animal/${values.id}`, values);
         },
+        async getAll() {
+            return (await api.get('animal')).data;
+        }
     },
 });
 
