@@ -36,14 +36,18 @@
 
 <script setup lang="ts">
 import { api } from '@/services/axios';
-import { useVeterinarianStore, headers, VeterinarianSchemaType } from '@/stores/veterinarian';
+import { veterinarianFetcher, headers } from '@/stores/veterinarian';
 import { useQuery, useQueryClient } from "vue-query";
 import SideMenu from '@/components/SideMenu.vue';
+import { ref } from 'vue';
 
-const veterinarianStore = useVeterinarianStore();
+const carregando = ref(true);
 const clientQuery = useQueryClient();
 const veterinaryQuery = useQuery({
-    queryKey: ['veterinarians'], queryFn: async () => await veterinarianStore.getAll()
+    queryKey: ['veterinarians'], queryFn: async () => await veterinarianFetcher.getAll(),
+    onSuccess: () => {
+        carregando.value = false
+    }
 })
 
 const onDelete = async (id?: string, name?: string) => {

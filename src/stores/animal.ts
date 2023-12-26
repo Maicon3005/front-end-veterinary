@@ -50,28 +50,16 @@ const animalSchema = yup.object({
 
 type AnimalSchemaType = yup.InferType<typeof animalSchema>;
 
-interface State {
-    animals: AnimalSchemaType[];
+const animalsFetcher = {
+    async create(values: AnimalSchemaType) {
+        await api.post('animal', values);
+    },
+    async edit(values: AnimalSchemaType) {
+        await api.put(`animal/${values.id}`, values);
+    },
+    async getAll() {
+        return (await api.get<AnimalSchemaType[]>('animal')).data;
+    }
 }
 
-const useAnimalStore = defineStore('animal', {
-    state: (): State => ({
-        animals: [],
-    }),
-
-    getters: {},
-
-    actions: {
-        async create(values: AnimalSchemaType) {
-            await api.post('animal', values);
-        },
-        async edit(values: AnimalSchemaType) {
-            await api.put(`animal/${values.id}`, values);
-        },
-        async getAll() {
-            return (await api.get<AnimalSchemaType[]>('animal')).data;
-        }
-    },
-});
-
-export { type AnimalSchemaType, animalSchema, useAnimalStore, possibleAnimalSizes, headers };
+export { type AnimalSchemaType, animalSchema, animalsFetcher, possibleAnimalSizes, headers };

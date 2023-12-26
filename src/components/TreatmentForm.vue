@@ -4,6 +4,7 @@
             <v-col cols="12" sm="10">
                 <v-row>
                     <v-col cols="12" md="6">
+                        <v-input type="hidden" v-bind="idProps" v-model="id" name="id" />
                         <v-select :items="toValue(defaultVeterinarians)" v-bind="veterinarianIdProps" :item-text="'name'"
                             :item-value="'id'" :item-title="'name'" v-model="veterinarianId" name="selectedVeterinary"
                             label="Veterinários" outlined dense color="blue">
@@ -29,7 +30,7 @@
 <script setup lang="ts">
 
 import { useForm } from 'vee-validate';
-import { TreatmentSchemaSchemaType, treatmentSchema } from '@/stores/treatment';
+import { TreatmentSchemaType, treatmentSchema } from '@/stores/treatment';
 import { VeterinarianSchemaType } from '@/stores/veterinarian';
 import { AnimalSchemaType } from '@/stores/animal';
 import { MaybeRef, toValue, watch } from 'vue';
@@ -37,22 +38,29 @@ import { MaybeRef, toValue, watch } from 'vue';
 const props = defineProps<{
     defaultVeterinarians?: MaybeRef<VeterinarianSchemaType[] | undefined>;
     defaultAnimals?: MaybeRef<AnimalSchemaType[] | undefined>;
-    defaultTreatment?: TreatmentSchemaSchemaType;
+    defaultTreatment?: TreatmentSchemaType;
 }>();
 
 const emit = defineEmits<{
-    submit: [TreatmentSchemaSchemaType];
+    submit: [TreatmentSchemaType];
 }>();
 
-const { defineField, handleSubmit } = useForm<TreatmentSchemaSchemaType>({
+const { defineField, handleSubmit } = useForm<TreatmentSchemaType>({
     validationSchema: treatmentSchema,
 });
 
 watch(props, (newProps) => {
     if (newProps.defaultTreatment) {
+        console.log('dentro watch');
+        console.log(newProps);
+
+        id.value = newProps.defaultTreatment.id;
+        creationDate.value = newProps.defaultTreatment.creationDate;
         animalId.value = newProps.defaultTreatment.animalId;
         veterinarianId.value = newProps.defaultTreatment.veterinarianId;
         recipe.value = newProps.defaultTreatment.recipe;
+
+        console.log(newProps);
     }
 })
 
@@ -66,6 +74,8 @@ const vuetifyConfig = (state: any) => ({
     },
 });
 
+let [id, idProps] = defineField<'id'>('id', vuetifyConfig);
+let [creationDate] = defineField<'creationDate'>('creationDate', vuetifyConfig);
 let [veterinarianId, veterinarianIdProps] = defineField<'veterinarianId'>('veterinarianId', vuetifyConfig);
 let [animalId, animaldProps] = defineField<'animalId'>('animalId', vuetifyConfig);
 let [recipe, recipeProps] = defineField<'recipe'>('recipe', vuetifyConfig);

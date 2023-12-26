@@ -25,28 +25,16 @@ const veterinarianSchema = yup.object({
 
 type VeterinarianSchemaType = yup.InferType<typeof veterinarianSchema>;
 
-interface State {
-    veterinarians: VeterinarianSchemaType[];
+const veterinarianFetcher = {
+    async create(values: VeterinarianSchemaType) {
+        await api.post('veterinarian', values);
+    },
+    async edit(values: VeterinarianSchemaType) {
+        await api.put(`veterinarian/${values.id}`, values);
+    },
+    async getAll() {
+        return (await api.get<VeterinarianSchemaType[]>('veterinarian/')).data;
+    }
 }
 
-const useVeterinarianStore = defineStore('veterinarian', {
-    state: (): State => ({
-        veterinarians: [],
-    }),
-
-    getters: {},
-
-    actions: {
-        async create(values: VeterinarianSchemaType) {
-            await api.post('veterinarian', values);
-        },
-        async edit(values: VeterinarianSchemaType) {
-            await api.put(`veterinarian/${values.id}`, values);
-        },
-        async getAll() {
-            return (await api.get<VeterinarianSchemaType[]>('veterinarian/')).data;
-        }
-    },
-});
-
-export { type VeterinarianSchemaType, veterinarianSchema, useVeterinarianStore, headers };
+export { type VeterinarianSchemaType, veterinarianSchema, veterinarianFetcher, headers };
