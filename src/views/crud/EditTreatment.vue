@@ -7,7 +7,7 @@
                 <v-divider></v-divider>
                 <v-card-text>
                     <treatment-form :default-treatment="treatmentEdit" :default-veterinarians="veterinarianQuery.data"
-                        :default-animals="animalQuery.data" @submit="onSubmit"></treatment-form>
+                        :default-animals="animalQuery.data" @submit="mutateAsync"></treatment-form>
                 </v-card-text>
             </v-main>
         </v-layout>
@@ -16,39 +16,40 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { TreatmentSchemaSchemaType, useTreatmentStore } from '@/stores/treatment';
-import { useVeterinarianStore } from '@/stores/veterinarian';
-import { useAnimalStore } from '@/stores/animal';
+import { TreatmentSchemaType, treatmentFetcher } from '@/stores/treatment';
 import TreatmentForm from '@/components/TreatmentForm.vue';
 import SideMenu from '@/components/SideMenu.vue';
 import { ref } from 'vue';
 import { api } from '@/services/axios';
-import { useQuery } from 'vue-query';
+import { useMutation, useQuery, useQueryClient } from 'vue-query';
+import { veterinarianFetcher } from '@/stores/veterinarian';
+import { animalsFetcher } from '@/stores/animal';
 
-const treatmentStore = useTreatmentStore();
-const veterinarianStore = useVeterinarianStore();
-const animalStore = useAnimalStore();
-
+const queryClient = useQueryClient();
 const router = useRouter();
 const route = useRoute();
-const idTreatment = route.params.idTreatment;
 
-const treatmentEdit = ref<TreatmentSchemaSchemaType>();
+const idTreatment = route.params.idTreatment;
+const treatmentEdit = ref<TreatmentSchemaType>();
 
 (async () => {
-    const res = await api.get<TreatmentSchemaSchemaType>(`/treatment/${idTreatment}`);
+    const res = await api.get<TreatmentSchemaType>(`/treatment/${idTreatment}`);
     treatmentEdit.value = res.data;
 })()
 
 const veterinarianQuery = useQuery({
-    queryKey: ['veterinarians-treatment'], queryFn: async () => await veterinarianStore.getAll()
+    queryKey: ['veterinarians'], queryFn: async () => await veterinarianFetcher.getAll()
 })
 
 const animalQuery = useQuery({
-    queryKey: ['aniamals-treatment'], queryFn: async () => await animalStore.getAll()
+    queryKey: ['animals'], queryFn: async () => await animalsFetcher.getAll()
 })
 
-const onSubmit = async (values: TreatmentSchemaSchemaType) => {
-    router.push('/treatment');
-};
+const { mutateAsync } = useMutation({
+    mutationFn: (values: TreatmentSchemaType) => treatmentFetcher.edit(values),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['treatment'] });
+        router.push('/treatment');
+    }
+});
 </script>

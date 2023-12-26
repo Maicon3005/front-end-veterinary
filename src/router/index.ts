@@ -77,6 +77,8 @@ router.beforeEach(async (to) => {
   const userIsLogged = authRequired && authStore.token != null;
   const toIsLoginPage = to.name === 'login';
 
+  document.title = `Veterinária - ${to.name?.toString()}`;
+
   if (!toIsLoginPage && !userIsLogged) {
     authStore.returnUrl = to.fullPath;
     return '/account/login';

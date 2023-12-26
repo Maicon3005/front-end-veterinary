@@ -6,7 +6,7 @@
                 <h2>Editar Veterinário</h2>
                 <v-divider></v-divider>
                 <v-card-text>
-                    <veterinarian-form :default-veterinarian="veterinarianEdit" @submit="onSubmit"></veterinarian-form>
+                    <veterinarian-form :default-veterinarian="veterinarianEdit" @submit="mutateAsync"></veterinarian-form>
                 </v-card-text>
             </v-main>
         </v-layout>
@@ -15,15 +15,16 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { VeterinarianSchemaType, useVeterinarianStore } from '@/stores/veterinarian';
+import { VeterinarianSchemaType, veterinarianFetcher } from '@/stores/veterinarian';
 import VeterinarianForm from '@/components/VeterinarianForm.vue';
 import SideMenu from '@/components/SideMenu.vue';
 import { ref } from 'vue';
 import { api } from '@/services/axios';
+import { useMutation, useQueryClient } from 'vue-query';
 
-const veterinarianStore = useVeterinarianStore();
 const router = useRouter();
 const route = useRoute();
+const queryClient = useQueryClient();
 const veterinarianId = route.params.idVeterinarian;
 
 const veterinarianEdit = ref<VeterinarianSchemaType>();
@@ -33,8 +34,11 @@ const veterinarianEdit = ref<VeterinarianSchemaType>();
     veterinarianEdit.value = res.data;
 })()
 
-const onSubmit = async (values: VeterinarianSchemaType) => {
-    await veterinarianStore.edit(values);
-    router.push('/veterinarian');
-};
+const { mutateAsync } = useMutation({
+    mutationFn: (values: VeterinarianSchemaType) => veterinarianFetcher.edit(values),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['veterinarian'] });
+        router.push('/veterinarian');
+    }
+});
 </script>

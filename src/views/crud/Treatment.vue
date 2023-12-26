@@ -11,7 +11,8 @@
                     <v-btn to="/treatment/create" color="primary">Criar</v-btn>
                 </v-row>
                 <v-row>
-                    <v-data-table :headers="headers" :items="treatmentList" :items-per-page="5" class="elevation-1">
+                    <v-data-table :headers="headers" :items="treatmentQuery.data.value" :items-per-page="5"
+                        class="elevation-1" :loading="carregando">
                         <template v-slot:item="row">
                             <tr>
                                 <td>{{ row.item.veterinarian.name }}</td>
@@ -36,22 +37,17 @@
 
 <script setup lang="ts">
 import { api } from '@/services/axios';
-import { TreatmentSchemaSchemaType, headers } from '@/stores/treatment';
-import { ref } from 'vue';
+import { headers, treatmentFetcher } from '@/stores/treatment';
 import { useQuery, useQueryClient } from "vue-query";
 import SideMenu from '@/components/SideMenu.vue';
+import { ref } from 'vue';
 
-const treatmentList = ref<TreatmentSchemaSchemaType[]>();
-
-const queryClient = useQueryClient();
-
-useQuery({
-    queryKey: ['treatments'], queryFn: async () => {
-        const res = await api.get('treatment/detailed');
-        console.log('teste');
-        console.log(res);
-
-        treatmentList.value = res.data;
+const carregando = ref(true);
+const clientQuery = useQueryClient();
+const treatmentQuery = useQuery({
+    queryKey: ['treatments'], queryFn: async () => await treatmentFetcher.getAll(),
+    onSuccess: () => {
+        carregando.value = false
     }
 })
 
@@ -59,7 +55,7 @@ const onDelete = async (id?: string) => {
     const isConfirmed = confirm(`Tem certeza que deseja excluir a receita?`);
     if (isConfirmed) {
         await api.delete(`treatment/${id}`);
-        queryClient.invalidateQueries({ queryKey: ['treatments'] });
+        clientQuery.invalidateQueries({ queryKey: ['treatments'] });
     }
 }
 </script>

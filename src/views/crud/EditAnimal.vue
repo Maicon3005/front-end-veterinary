@@ -6,7 +6,7 @@
                 <h2>Editar Animal</h2>
                 <v-divider></v-divider>
                 <v-card-text>
-                    <animal-form :default-animal="animalEdit" @submit="onSubmit"></animal-form>
+                    <animal-form :default-animal="animalEdit" @submit="mutateAsync"></animal-form>
                 </v-card-text>
             </v-main>
         </v-layout>
@@ -15,17 +15,18 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { AnimalSchemaType, useAnimalStore } from '@/stores/animal';
+import { AnimalSchemaType, animalsFetcher } from '@/stores/animal';
 import AnimalForm from '@/components/AnimalForm.vue';
 import SideMenu from '@/components/SideMenu.vue';
 import { ref } from 'vue';
 import { api } from '@/services/axios';
+import { useMutation, useQueryClient } from 'vue-query';
 
-const animalStore = useAnimalStore();
 const router = useRouter();
 const route = useRoute();
-const animalId = route.params.idAnimal;
+const queryClient = useQueryClient();
 
+const animalId = route.params.idAnimal;
 const animalEdit = ref<AnimalSchemaType>();
 
 (async () => {
@@ -33,8 +34,11 @@ const animalEdit = ref<AnimalSchemaType>();
     animalEdit.value = res.data;
 })()
 
-const onSubmit = async (values: AnimalSchemaType) => {
-    await animalStore.edit(values);
-    router.push('/animals');
-};
+const { mutateAsync } = useMutation({
+    mutationFn: (values: AnimalSchemaType) => animalsFetcher.edit(values),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['animal'] });
+        router.push('/animals');
+    }
+});
 </script>

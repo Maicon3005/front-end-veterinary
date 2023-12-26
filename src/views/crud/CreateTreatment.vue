@@ -7,7 +7,7 @@
                 <v-divider></v-divider>
                 <v-card-text>
                     <treatment-form :default-veterinarians="veterinarianQuery.data" :default-animals="animalQuery.data"
-                        @submit="onSubmit"></treatment-form>
+                        @submit="mutateAsync"></treatment-form>
                 </v-card-text>
             </v-main>
         </v-layout>
@@ -19,26 +19,27 @@
 import { useRouter } from 'vue-router';
 import TreatmentForm from '@/components/TreatmentForm.vue';
 import SideMenu from '@/components/SideMenu.vue';
-import { TreatmentSchemaSchemaType, useTreatmentStore } from '@/stores/treatment';
-import { useVeterinarianStore } from '@/stores/veterinarian';
-import { useAnimalStore } from '@/stores/animal';
-import { useQuery } from 'vue-query';
+import { TreatmentSchemaSchemaType, treatmentFetcher } from '@/stores/treatment';
+import { veterinarianFetcher } from '@/stores/veterinarian';
+import { animalsFetcher } from '@/stores/animal';
+import { useMutation, useQuery, useQueryClient } from 'vue-query';
 
-const treatmentStore = useTreatmentStore();
-const veterinarianStore = useVeterinarianStore();
-const animalStore = useAnimalStore();
+const queryClient = useQueryClient();
 const router = useRouter();
 
 const veterinarianQuery = useQuery({
-    queryKey: ['veterinarians-treatment'], queryFn: async () => await veterinarianStore.getAll()
+    queryKey: ['veterinarians'], queryFn: async () => await veterinarianFetcher.getAll()
 })
 
 const animalQuery = useQuery({
-    queryKey: ['aniamals-treatment'], queryFn: async () => await animalStore.getAll()
+    queryKey: ['animals'], queryFn: async () => await animalsFetcher.getAll()
 })
 
-const onSubmit = async (values: TreatmentSchemaSchemaType) => {
-    treatmentStore.create(values);
-    router.push('/treatment');
-};
+const { mutateAsync } = useMutation({
+    mutationFn: (values: TreatmentSchemaSchemaType) => treatmentFetcher.create(values),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['treatment'] });
+        router.push('/treatment');
+    }
+});
 </script>

@@ -6,7 +6,7 @@
                 <h2>Criar Animal</h2>
                 <v-divider></v-divider>
                 <v-card-text>
-                    <animal-form @submit="onSubmit"></animal-form>
+                    <animal-form @submit="mutateAsync"></animal-form>
                 </v-card-text>
             </v-main>
         </v-layout>
@@ -16,15 +16,19 @@
 <script lang="ts" setup>
 
 import { useRouter } from 'vue-router';
-import { AnimalSchemaType, useAnimalStore } from '@/stores/animal';
+import { AnimalSchemaType, animalsFetcher } from '@/stores/animal';
 import AnimalForm from '@/components/AnimalForm.vue';
 import SideMenu from '@/components/SideMenu.vue';
+import { useMutation, useQueryClient } from 'vue-query';
 
-const animalStore = useAnimalStore();
 const router = useRouter();
+const queryClient = useQueryClient();
 
-const onSubmit = async (values: AnimalSchemaType) => {
-    animalStore.create(values);
-    router.push('/animals');
-};
+const { mutateAsync } = useMutation({
+    mutationFn: (values: AnimalSchemaType) => animalsFetcher.create(values),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['animal'] });
+        router.push('/animals');
+    }
+});
 </script>

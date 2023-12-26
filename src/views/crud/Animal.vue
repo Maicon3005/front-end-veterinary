@@ -20,10 +20,10 @@
                                 <td>{{ row.item.age }}</td>
                                 <td>{{ possibleAnimalSizes.find(size => size.value === row.item.size)?.label }}</td>
                                 <td>
-                                    <v-btn class="mx-1" color="orange" :to="{ path: `/animal/edit/${row.item.id}` }">
+                                    <v-btn color="orange" :to="{ path: `/animal/edit/${row.item.id}` }" rounded>
                                         <v-icon class="mr-1" icon="mdi-pencil"></v-icon>
                                     </v-btn>
-                                    <v-btn class="mx-1" color="red" @Click="onDelete(row.item.id, row.item.name)">
+                                    <v-btn color="red" @Click="onDelete(row.item.id, row.item.name)" rounded>
                                         <v-icon class="mr-1" icon="mdi-delete"></v-icon>
                                     </v-btn>
                                 </td>
@@ -41,10 +41,15 @@ import { api } from '@/services/axios';
 import { AnimalSchemaType, headers, possibleAnimalSizes } from '@/stores/animal';
 import { useQuery, useQueryClient } from "vue-query";
 import SideMenu from '@/components/SideMenu.vue';
+import { ref } from 'vue';
 
+const carregando = ref(true);
 const clientQuery = useQueryClient();
 const animalQuery = useQuery({
-    queryKey: ['animals'], queryFn: async () => await api.get<AnimalSchemaType[]>('animal')
+    queryKey: ['animals'], queryFn: async () => await api.get<AnimalSchemaType[]>('animal'),
+    onSuccess: () => {
+        carregando.value = false
+    }
 })
 
 const onDelete = async (id?: string, name?: string) => {

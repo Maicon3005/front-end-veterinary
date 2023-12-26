@@ -1,8 +1,6 @@
 import { api } from '@/services/axios';
-import { defineStore } from 'pinia';
 import * as yup from 'yup';
-import { VeterinarianSchemaType, veterinarianSchema } from '@/stores/veterinarian';
-import { animalSchema } from '@/stores/animal';
+import { VeterinarianSchemaType } from '@/stores/veterinarian';
 
 const headers = [
     {
@@ -33,34 +31,22 @@ const treatmentSchema = yup.object({
     recipe: yup.string(),
 });
 
-type TreatmentSchemaSchemaType = yup.InferType<typeof treatmentSchema>;
+type TreatmentSchemaType = yup.InferType<typeof treatmentSchema>;
 
-interface State {
-    treatments: TreatmentSchemaSchemaType[];
-    veterinarianList: VeterinarianSchemaType[];
+const treatmentFetcher = {
+    async create(values: TreatmentSchemaType) {
+        await api.post('treatment/', values);
+    },
+    async edit(values: TreatmentSchemaType) {
+        console.log('dentro fetcher');
+        console.log(values);
+
+
+        await api.put(`treatment/${values.id}`, values);
+    },
+    async getAll() {
+        return (await api.get<TreatmentSchemaType[]>('treatment/detailed')).data;
+    }
 }
 
-const useTreatmentStore = defineStore('treatment', {
-    state: (): State => ({
-        treatments: [],
-        veterinarianList: []
-    }),
-
-    getters: {
-    },
-
-    actions: {
-        async create(values: TreatmentSchemaSchemaType) {
-            await api.post('treatment/', values);
-        },
-        async edit(values: TreatmentSchemaSchemaType) {
-            console.log('teste');
-
-            console.log(values.id);
-
-            await api.put(`treatment/${values.id}`, values);
-        },
-    },
-});
-
-export { type TreatmentSchemaSchemaType, treatmentSchema, useTreatmentStore, headers };
+export { type TreatmentSchemaType, treatmentSchema, treatmentFetcher, headers };
